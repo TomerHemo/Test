@@ -1,0 +1,4 @@
+cron:
+- description: Run BQ script
+  url: /transfer
+  schedule: every day 11:00
