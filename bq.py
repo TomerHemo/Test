@@ -35,40 +35,7 @@ class TransferHandler(webapp2.RequestHandler):
             "projectId": "omega-strand-134923",
             "tableId": "CrossDevice_CID_UserID"
           },
-          "query": "select distinct CID, User_ID,CURRENT_TIMESTAMP() as LastUpdateDate , RegDate,FTDDate
-from  (
-        SELECT REGEXP_EXTRACT(Other_Data, r'u1=(\d+);') CID, User_ID, RegDate,FTDDate
-        FROM `ddm_dt_v2_us.activity_1684` a
-        inner join ddm_dt_v2_us.match_table_activity_cats_1684 b on a.Activity_ID = b.Activity_ID and EXTRACT(date FROM TIMESTAMP_MICROS( a.Event_Time ) ) = b. _DATA_DATE
-        left join (
-                      select   (REGEXP_EXTRACT(Other_Data, r'u1=(\d+);'))  CID,    
-                               min(  case when Activity_Type='reg_pix' then TIMESTAMP_MICROS( Event_Time ) else null end  ) as RegDate,
-                               min(  case when Activity_Type='ftd_pixe' then TIMESTAMP_MICROS( Event_Time ) else null end ) as FTDDate,
-                               CURRENT_TIMESTAMP() as LastUpdateDate
-                      from  `ddm_dt_v2_us.activity_1684_*` a       inner join ddm_dt_v2_us.match_table_activity_cats_1684_20160814 b on a.Activity_ID = b.Activity_ID
-                      where Activity_Type in ('reg_pix', 'ftd_pixe')
-                      group by  CID
-                   ) RegFTD on REGEXP_EXTRACT(Other_Data, r'u1=(\d+);') = RegFTD.CID
-        WHERE User_ID <>"0"
-        and REGEXP_EXTRACT(Other_Data, r'u1=(\d+);') <>"0" 
-        and  Activity_Type  in ('reg_pix','ftd_pixe','appin0','depos0','login')
- 
-UNION ALL
-        SELECT REGEXP_EXTRACT(U_Value, r'cid\*\*(\d+),') CID, User_ID, RegDate,FTDDate
-        FROM `ddm_dt_v2_us.impression_1684_*` 
-        left join ( 
-                      select   (REGEXP_EXTRACT(Other_Data, r'u1=(\d+);'))  CID,    
-                               min(  case when Activity_Type='reg_pix' then TIMESTAMP_MICROS( Event_Time ) else null end  ) as RegDate,
-                               min(  case when Activity_Type='ftd_pixe' then TIMESTAMP_MICROS( Event_Time ) else null end ) as FTDDate,
-                               CURRENT_TIMESTAMP() as LastUpdateDate
-                      from  `ddm_dt_v2_us.activity_1684_*` a       inner join ddm_dt_v2_us.match_table_activity_cats_1684_20160814 b on a.Activity_ID = b.Activity_ID
-                      where Activity_Type in ('reg_pix', 'ftd_pixe')
-                      group by  CID
-        
-                  ) RegFTD on REGEXP_EXTRACT(U_Value, r'cid\*\*(\d+),') = RegFTD.CID
-        WHERE User_ID <>"0" and REGEXP_EXTRACT(U_Value, r'cid\*\*(\d+),') <> "0"
-)
-"
+          "query": "select distinct CID, User_ID,CURRENT_TIMESTAMP() as LastUpdateDate , RegDate,FTDDate from (SELECT REGEXP_EXTRACT(Other_Data, r'u1=(\d+);') CID, User_ID, RegDate,FTDDate FROM `ddm_dt_v2_us.activity_1684` a inner join ddm_dt_v2_us.match_table_activity_cats_1684 b on a.Activity_ID = b.Activity_ID and EXTRACT(date FROM TIMESTAMP_MICROS( a.Event_Time ) ) = b. _DATA_DATE left join ( select (REGEXP_EXTRACT(Other_Data, r'u1=(\d+);'))  CID, min(  case when Activity_Type='reg_pix' then TIMESTAMP_MICROS( Event_Time ) else null end  ) as RegDate, min(  case when Activity_Type='ftd_pixe' then TIMESTAMP_MICROS( Event_Time ) else null end ) as FTDDate, CURRENT_TIMESTAMP() as LastUpdateDate  from  `ddm_dt_v2_us.activity_1684_*` a inner join ddm_dt_v2_us.match_table_activity_cats_1684_20160814 b on a.Activity_ID = b.Activity_ID where Activity_Type in ('reg_pix', 'ftd_pixe') group by  CID ) RegFTD on REGEXP_EXTRACT(Other_Data, r'u1=(\d+);') = RegFTD.CID WHERE User_ID <>"0" and REGEXP_EXTRACT(Other_Data, r'u1=(\d+);') <>"0" and  Activity_Type  in ('reg_pix','ftd_pixe','appin0','depos0','login') UNION ALL SELECT REGEXP_EXTRACT(U_Value, r'cid\*\*(\d+),') CID, User_ID, RegDate,FTDDate FROM `ddm_dt_v2_us.impression_1684_*` left join (select   (REGEXP_EXTRACT(Other_Data, r'u1=(\d+);'))  CID, min(  case when Activity_Type='reg_pix' then TIMESTAMP_MICROS( Event_Time ) else null end  ) as RegDate, min(  case when Activity_Type='ftd_pixe' then TIMESTAMP_MICROS( Event_Time ) else null end ) as FTDDate, CURRENT_TIMESTAMP() as LastUpdateDate from  `ddm_dt_v2_us.activity_1684_*` a       inner join ddm_dt_v2_us.match_table_activity_cats_1684_20160814 b on a.Activity_ID = b.Activity_ID where Activity_Type in ('reg_pix', 'ftd_pixe') group by  CID                   ) RegFTD on REGEXP_EXTRACT(U_Value, r'cid\*\*(\d+),') = RegFTD.CID WHERE User_ID <>"0" and REGEXP_EXTRACT(U_Value, r'cid\*\*(\d+),') <> "0" ) " 
         }
       }
     }
