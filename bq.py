@@ -30,6 +30,7 @@ class TransferHandler(webapp2.RequestHandler):
         "writeDisposition": "WRITE_TRUNCATE",
         "query": {
           "allowLargeResults": true,
+          "useLegacySql": false,
           "destinationTable": {
             "datasetId": "ddm_dt_v2_us",
             "projectId": "omega-strand-134923",
@@ -45,7 +46,6 @@ class TransferHandler(webapp2.RequestHandler):
 
     # TODO: Change code below to process the 'response' dict:
     pprint(response)
-
 
 
 app = webapp2.WSGIApplication([
